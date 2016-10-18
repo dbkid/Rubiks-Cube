@@ -10,7 +10,7 @@ MVP:
 
 Ideally will look something like this:
 
-
+(https://github.com/dbkid/Rubiks-Cube/blob/master/Rubik's%20Cube.png)
 
 
 Libraries:
