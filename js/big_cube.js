@@ -29,10 +29,22 @@ camera.position.z = 5;
 
 let dragging = false;
 $(renderer.domElement).on("mousedown", function(e){
+  let startX = e.clientX;
   dragging = true;
   $(renderer.domElement).on("mousemove", function(e){
     if(dragging === true){
-      crossSection.rotateY(.01);}
+      let moveX = e.clientX;
+        if(startX-moveX > 0){
+          crossSection.rotateY(-.01);
+          startX = moveX;
+        }
+        else if(startX-moveX < 0){
+          crossSection.rotateY(.01);
+          startX = moveX;
+        }
+
+
+    }
     });
 });
 
