@@ -8,11 +8,20 @@ renderer.setClearColor( 0x000000, 0 );
 document.body.appendChild( renderer.domElement );
 
 var raycaster = new THREE.Raycaster();
+var selectMouse = new THREE.Vector2();
 var mouse = new THREE.Vector2();
 
 let dragging = false;
+let startX = 0;
+let selectStartX = 0;
+let selectStartY = 0;
+
 function yesDragging(event){
   dragging = true;
+  selectMouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+  selectMouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+  selectStartX = ( event.clientX / window.innerWidth ) * 2 - 1;
+  selectStartY = - ( event.clientY / window.innerHeight ) * 2 + 1;
 }
 function noDragging(event){
   dragging = false;
@@ -29,7 +38,7 @@ window.addEventListener( 'mousemove', onMouseMove );
 window.addEventListener('mousedown', yesDragging );
 window.addEventListener('mouseup', noDragging );
 
-var bigCubeGeometry = new THREE.BoxGeometry( 4, 4, 4 );
+var bigCubeGeometry = new THREE.BoxGeometry( 3, 3, 3 );
 bigCubeGeometry.name = "bigCube";
 var bigCubeMaterial = new THREE.MeshBasicMaterial( { color: 000000, wireframe: true } );
 var bigCube = new THREE.Mesh( bigCubeGeometry, bigCubeMaterial );
@@ -37,13 +46,29 @@ var bigCube = new THREE.Mesh( bigCubeGeometry, bigCubeMaterial );
 // bigCube.rotation.x = Math.PI/4;
 scene.add( bigCube );
 
-var crossSectionGeometry = new THREE.BoxGeometry(4,1,4);
-crossSectionGeometry.name = "crossSection"
-var crossSectionMaterial = new THREE.MeshBasicMaterial( {color: 0x00ff00, wireframe: false });
-var crossSection = new THREE.Mesh(crossSectionGeometry, crossSectionMaterial);
-scene.add(crossSection);
-crossSection.position.setY(-1.5);
+var xCrossSectionGeometry = new THREE.BoxGeometry(3,1,3);
+xCrossSectionGeometry.name = "xCrossSection"
+var xCrossSectionMaterial = new THREE.MeshBasicMaterial( {color: 0x00ff00, wireframe: true });
+var xCrossSection = new THREE.Mesh(xCrossSectionGeometry, xCrossSectionMaterial);
+scene.add(xCrossSection);
+xCrossSection.position.setY(-1);
 
+var yCrossSectionGeometry = new THREE.BoxGeometry(1,3,3);
+yCrossSectionGeometry.name = "yCrossSection"
+var yCrossSectionMaterial = new THREE.MeshBasicMaterial( {color: 0x00ff00, wireframe: true });
+var yCrossSection = new THREE.Mesh(yCrossSectionGeometry, yCrossSectionMaterial);
+scene.add(yCrossSection);
+// yCrossSection.position.setX(-1);
+
+var smallCubeGeometry = new THREE.BoxGeometry(1,1,1);
+smallCubeGeometry.name = "smallCubeGeometry"
+var smallCubeMaterial = new THREE.MeshBasicMaterial( {color: 0x00ff00, wireframe: false });
+var smallCube = new THREE.Mesh(smallCubeGeometry, smallCubeMaterial);
+scene.add(smallCube);
+smallCube.position.setY(-1);
+
+yCrossSection.add(smallCube);
+// xCrossSection.add(smallCube);
 
 // crossSection.add(bigCube);
 
@@ -51,20 +76,60 @@ camera.position.z = 5;
 
 
 
-  let startX = 0;
-let dragCrossSection = function(obj){
 
+let dragXCrossSection = function(obj){
   if(dragging===true){
-    if(startX - mouse.x < 0){
-      obj.object.rotateY(.03);
+    let xDelta = startX - mouse.x;
+    if(xDelta < 0){
+      obj.rotateY(.05);
       startX = mouse.x;
     }
-    else if(startX - mouse.x > 0){
-      obj.object.rotateY(-.03);
+    else if(xDelta > 0){
+      obj.rotateY(-.05);
       startX = mouse.x;
     }
   }
-}
+};
+
+let startY = 0;
+let dragYCrossSection = function(obj){
+  let yDelta = startY - mouse.y;
+  if(dragging===true){
+    if(yDelta > 0){
+      obj.rotateX(.05);
+      startY = mouse.y;
+    }
+    else if(yDelta < 0){
+      obj.rotateX(-.05);
+      startY = mouse.y;
+    }
+  }
+};
+
+let cubeArray = [smallCube];
+let boundaryBoxX = new THREE.Box3();
+boundaryBoxX.setFromObject(xCrossSection);
+let boundaryBoxY = new THREE.Box3();
+boundaryBoxY.setFromObject(yCrossSection);
+let cubeBoundaryBox = new THREE.Box3();
+cubeBoundaryBox.setFromObject(smallCube);
+
+
+
+let selectCubesX = function(crossSection){
+  cubeArray.forEach( (cube) => {
+    if (boundaryBoxX.intersectsBox(cubeBoundaryBox) === true){
+      crossSection.add(cube);
+    }
+  });
+};
+let selectCubesY = function(crossSection){
+  cubeArray.forEach( (cube) => {
+    if (boundaryBoxY.intersectsBox(cubeBoundaryBox) === true){
+      crossSection.add(cube);
+    }
+  });
+};
 // }
 //   let dragging = false;
 //   let startX = 0;
@@ -137,28 +202,47 @@ let dragCrossSection = function(obj){
 // }
 
 //
-controls = new THREE.OrbitControls(camera, renderer.domElement);
+// controls = new THREE.OrbitControls(camera, renderer.domElement);
 
 
 
 var render = function () {
   requestAnimationFrame( render );
 
-  raycaster.setFromCamera( mouse, camera );
+  raycaster.setFromCamera( selectMouse, camera );
 
   var intersects = raycaster.intersectObjects( scene.children );
 
   renderer.render(scene, camera);
 
   for (var i = 0; i < intersects.length; i++) {
-    if(intersects[i].object.geometry.name === "crossSection"){
-      dragCrossSection(intersects[i]);
+    let selected = null;
+    if ((Math.abs(selectStartX - mouse.x) >= Math.abs(selectStartY - mouse.y)) && Math.abs(selectStartX - mouse.x) < 5){
+      selected = "xCrossSection";
+      selectCubesX(intersects[i].object);
+
+    }
+    // else if ((Math.abs(startY - mouse.y) > Math.abs(startX - mouse.x)) && Math.abs(startY - mouse.y) < 5){
+    else{
+      selected = "yCrossSection";
+      selectCubesY(intersects[i].object);
     };
+    if( selected === "xCrossSection"){
+      if(intersects[i].object.geometry.name === "xCrossSection"){
+        dragXCrossSection(intersects[i].object);
+      };
+    }
+    else if( selected === "yCrossSection"){
+      if(intersects[i].object.geometry.name === "yCrossSection"){
+        dragYCrossSection(intersects[i].object);
+      };
+    }
+
   };
 
-  if (intersects.length === 0){
-    controls.update();
-  };
+  // if (intersects.length === 0){
+  //   controls.update();
+  // };
 
 };
 
