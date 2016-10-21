@@ -25,6 +25,8 @@ function yesDragging(event){
 }
 function noDragging(event){
   dragging = false;
+  smallCubeGeometry.computeBoundingBox();
+  reset = false;
 }
 
 function onMouseMove( event ) {
@@ -58,16 +60,17 @@ yCrossSectionGeometry.name = "yCrossSection"
 var yCrossSectionMaterial = new THREE.MeshBasicMaterial( {color: 0x00ff00, wireframe: true });
 var yCrossSection = new THREE.Mesh(yCrossSectionGeometry, yCrossSectionMaterial);
 scene.add(yCrossSection);
-// yCrossSection.position.setX(-1);
+yCrossSection.position.setX(-1);
 
 var smallCubeGeometry = new THREE.BoxGeometry(1,1,1);
 smallCubeGeometry.name = "smallCubeGeometry"
 var smallCubeMaterial = new THREE.MeshBasicMaterial( {color: 0x00ff00, wireframe: false });
 var smallCube = new THREE.Mesh(smallCubeGeometry, smallCubeMaterial);
 scene.add(smallCube);
-smallCube.position.setY(-1);
+// smallCube.position.setY(-1);
+smallCube.position.setX(-1);
 
-yCrossSection.add(smallCube);
+xCrossSection.add(smallCube);
 // xCrossSection.add(smallCube);
 
 // crossSection.add(bigCube);
@@ -115,18 +118,39 @@ let cubeBoundaryBox = new THREE.Box3();
 cubeBoundaryBox.setFromObject(smallCube);
 
 
-
-let selectCubesX = function(crossSection){
+let reset = false;
+let ySwitched = false;
+let xSwitched = true;
+let selectCubesX = function(xCrossSection){
   cubeArray.forEach( (cube) => {
-    if (boundaryBoxX.intersectsBox(cubeBoundaryBox) === true){
-      crossSection.add(cube);
+    // cubeBoundaryBox.setFromObject(smallCube);
+    if (boundaryBoxX.containsBox(cubeBoundaryBox) === true){
+      xCrossSection.add(cube);
+      if (reset === false && ySwitched === true){
+        smallCube.position.setY(smallCube.position.y + 1);
+        smallCube.position.setX(smallCube.position.x - 1);
+        smallCubeGeometry.computeBoundingBox();
+        reset = true;
+        xSwitched = true;
+        ySwitched = false;
+      }
     }
   });
 };
-let selectCubesY = function(crossSection){
+let selectCubesY = function(yCrossSection){
   cubeArray.forEach( (cube) => {
-    if (boundaryBoxY.intersectsBox(cubeBoundaryBox) === true){
-      crossSection.add(cube);
+    // cubeBoundaryBox.setFromObject(smallCube);
+    if (boundaryBoxY.containsBox(cubeBoundaryBox) === true){
+      yCrossSection.add(cube);
+      if (reset === false && xSwitched === true){
+        smallCube.position.setX(smallCube.position.x + 1);
+        smallCube.position.setY(smallCube.position.y - 1);
+        smallCubeGeometry.computeBoundingBox();
+
+        reset = true;
+        ySwitched = true;
+        xSwitched = false;
+      }
     }
   });
 };
@@ -219,21 +243,23 @@ var render = function () {
     let selected = null;
     if ((Math.abs(selectStartX - mouse.x) >= Math.abs(selectStartY - mouse.y)) && Math.abs(selectStartX - mouse.x) < 5){
       selected = "xCrossSection";
-      selectCubesX(intersects[i].object);
+
 
     }
     // else if ((Math.abs(startY - mouse.y) > Math.abs(startX - mouse.x)) && Math.abs(startY - mouse.y) < 5){
     else{
       selected = "yCrossSection";
-      selectCubesY(intersects[i].object);
+
     };
     if( selected === "xCrossSection"){
       if(intersects[i].object.geometry.name === "xCrossSection"){
+        selectCubesX(intersects[i].object);
         dragXCrossSection(intersects[i].object);
       };
     }
     else if( selected === "yCrossSection"){
       if(intersects[i].object.geometry.name === "yCrossSection"){
+        selectCubesY(intersects[i].object);
         dragYCrossSection(intersects[i].object);
       };
     }
@@ -241,7 +267,7 @@ var render = function () {
   };
 
   // if (intersects.length === 0){
-  //   controls.update();
+    // controls.update();
   // };
 
 };
