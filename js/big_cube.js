@@ -23,11 +23,6 @@ function yesDragging(event){
   selectStartX = ( event.clientX / window.innerWidth ) * 2 - 1;
   selectStartY = - ( event.clientY / window.innerHeight ) * 2 + 1;
 }
-function noDragging(event){
-  dragging = false;
-  smallCubeGeometry.computeBoundingBox();
-  reset = false;
-}
 
 function onMouseMove( event ) {
 
@@ -49,11 +44,26 @@ var bigCube = new THREE.Mesh( bigCubeGeometry, bigCubeMaterial );
 scene.add( bigCube );
 
 var xCrossSectionGeometry = new THREE.BoxGeometry(3,1,3);
-xCrossSectionGeometry.name = "xCrossSection"
 var xCrossSectionMaterial = new THREE.MeshBasicMaterial( {color: 0x00ff00, wireframe: true });
+xCrossSectionGeometry.name = "xCrossSection"
+
 var xCrossSection = new THREE.Mesh(xCrossSectionGeometry, xCrossSectionMaterial);
 scene.add(xCrossSection);
 xCrossSection.position.setY(-1);
+
+// var xCrossSectionGeometry2 = new THREE.BoxGeometry(3,1,3);
+// var xCrossSectionMaterial2 = new THREE.MeshBasicMaterial( {color: 0x00ff00, wireframe: true });
+// xCrossSectionGeometry2.name = "xCrossSection"
+// var xCrossSection2 = new THREE.Mesh(xCrossSectionGeometry, xCrossSectionMaterial);
+// scene.add(xCrossSection2);
+// xCrossSection2.position.setY(0);
+// //
+// // var xCrossSectionGeometry3 = new THREE.BoxGeometry(3,1,3);
+// // xCrossSectionGeometry3.name = "xCrossSection3"
+// // var xCrossSectionMaterial = new THREE.MeshBasicMaterial( {color: 0x00ff00, wireframe: true });
+// var xCrossSection3 = new THREE.Mesh(xCrossSectionGeometry, xCrossSectionMaterial);
+// scene.add(xCrossSection3);
+// xCrossSection3.position.setY(1);
 
 var yCrossSectionGeometry = new THREE.BoxGeometry(1,3,3);
 yCrossSectionGeometry.name = "yCrossSection"
@@ -61,6 +71,21 @@ var yCrossSectionMaterial = new THREE.MeshBasicMaterial( {color: 0x00ff00, wiref
 var yCrossSection = new THREE.Mesh(yCrossSectionGeometry, yCrossSectionMaterial);
 scene.add(yCrossSection);
 yCrossSection.position.setX(-1);
+//
+// var yCrossSection2 = new THREE.Mesh(yCrossSectionGeometry, yCrossSectionMaterial);
+// scene.add(yCrossSection2);
+// yCrossSection2.position.setX(0);
+//
+// var yCrossSection3 = new THREE.Mesh(yCrossSectionGeometry, yCrossSectionMaterial);
+// scene.add(yCrossSection3);
+// yCrossSection3.position.setX(1);
+
+// var zCrossSectionGeometry = new THREE.BoxGeometry(3,3,1);
+// zCrossSectionGeometry.name = "zCrossSection"
+// var zCrossSectionMaterial = new THREE.MeshBasicMaterial( {color: 0x00ff00, wireframe: true });
+// var zCrossSection = new THREE.Mesh(zCrossSectionGeometry, zCrossSectionMaterial);
+// scene.add(zCrossSection);
+// zCrossSection.position.setZ(1);
 
 var smallCubeGeometry = new THREE.BoxGeometry(1,1,1);
 smallCubeGeometry.name = "smallCubeGeometry"
@@ -85,6 +110,10 @@ let dragXCrossSection = function(obj){
     let xDelta = startX - mouse.x;
     if(xDelta < 0){
       obj.rotateY(.05);
+      // let axis = bigCube.localToWorld ( bigCube.position );
+      // obj.rotateOnAxis ( axis, .05 );
+
+
       startX = mouse.x;
     }
     else if(xDelta > 0){
@@ -108,6 +137,20 @@ let dragYCrossSection = function(obj){
     }
   }
 };
+//
+// let dragZCrossSection = function(obj){
+//   let yDelta = startY - mouse.y;
+//   if(dragging===true){
+//     if(yDelta > 0){
+//       obj.rotateZ(.05);
+//       startY = mouse.y;
+//     }
+//     else if(yDelta < 0){
+//       obj.rotateZ(-.05);
+//       startY = mouse.y;
+//     }
+//   }
+// };
 
 let cubeArray = [smallCube];
 let boundaryBoxX = new THREE.Box3();
@@ -117,6 +160,14 @@ boundaryBoxY.setFromObject(yCrossSection);
 let cubeBoundaryBox = new THREE.Box3();
 cubeBoundaryBox.setFromObject(smallCube);
 
+function noDragging(event){
+  dragging = false;
+  cubeBoundaryBox.setFromObject(smallCube);
+  // cubeBoundaryBox = smallCubeGeometry.computeBoundingBox();
+  reset = false;
+}
+
+
 
 let reset = false;
 let ySwitched = false;
@@ -124,12 +175,18 @@ let xSwitched = true;
 let selectCubesX = function(xCrossSection){
   cubeArray.forEach( (cube) => {
     // cubeBoundaryBox.setFromObject(smallCube);
-    if (boundaryBoxX.containsBox(cubeBoundaryBox) === true){
+    boundaryBoxX.setFromObject(xCrossSection);
+    cubeBoundaryBox.setFromObject(cube);
+    // boundaryBoxX = xCrossSectionGeometry.computeBoundingBox();
+    if (boundaryBoxX.containsPoint(cubeBoundaryBox.getCenter()) === true){
       xCrossSection.add(cube);
       if (reset === false && ySwitched === true){
-        smallCube.position.setY(smallCube.position.y + 1);
-        smallCube.position.setX(smallCube.position.x - 1);
-        smallCubeGeometry.computeBoundingBox();
+        cube.position.setY(smallCube.position.y + 1);
+        cube.position.setX(smallCube.position.x - 1);
+        // smallCube.setWorldPosition(xCrossSection.position);
+        cubeBoundaryBox.setFromObject(cube);
+
+        // cubeBoundaryBox = smallCubeGeometry.computeBoundingBox();
         reset = true;
         xSwitched = true;
         ySwitched = false;
@@ -140,13 +197,18 @@ let selectCubesX = function(xCrossSection){
 let selectCubesY = function(yCrossSection){
   cubeArray.forEach( (cube) => {
     // cubeBoundaryBox.setFromObject(smallCube);
-    if (boundaryBoxY.containsBox(cubeBoundaryBox) === true){
+    boundaryBoxY.setFromObject(yCrossSection);
+    cubeBoundaryBox.setFromObject(cube);
+    // boundaryBoxY = yCrossSectionGeometry.computeBoundingBox();
+    if (boundaryBoxY.containsPoint(cubeBoundaryBox.getCenter()) === true){
       yCrossSection.add(cube);
       if (reset === false && xSwitched === true){
-        smallCube.position.setX(smallCube.position.x + 1);
-        smallCube.position.setY(smallCube.position.y - 1);
-        smallCubeGeometry.computeBoundingBox();
+        cube.position.setX(smallCube.position.x + 1);
+        cube.position.setY(smallCube.position.y - 1);
+        cubeBoundaryBox.setFromObject(cube);
 
+        // cubeBoundaryBox = smallCubeGeometry.computeBoundingBox();
+        // smallCube.setWorldPosition(yCrossSection.position);
         reset = true;
         ySwitched = true;
         xSwitched = false;
@@ -226,11 +288,12 @@ let selectCubesY = function(yCrossSection){
 // }
 
 //
-// controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls = new THREE.OrbitControls(camera, renderer.domElement);
 
 
 
 var render = function () {
+  controls.enableRotate = false;
   requestAnimationFrame( render );
 
   raycaster.setFromCamera( selectMouse, camera );
@@ -266,10 +329,10 @@ var render = function () {
 
   };
 
-  // if (intersects.length === 0){
-    // controls.update();
-  // };
-
+  if (intersects.length === 0){
+    controls.enableRotate = true;
+  };
+  controls.update();
 };
 
 
