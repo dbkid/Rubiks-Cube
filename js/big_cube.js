@@ -11,30 +11,8 @@ var raycaster = new THREE.Raycaster();
 var selectMouse = new THREE.Vector2();
 var mouse = new THREE.Vector2();
 
-let dragging = false;
-let startX = 0;
-let selectStartX = 0;
-let selectStartY = 0;
 
-function yesDragging(event){
-  dragging = true;
-  selectMouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-  selectMouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-  selectStartX = ( event.clientX / window.innerWidth ) * 2 - 1;
-  selectStartY = - ( event.clientY / window.innerHeight ) * 2 + 1;
-}
-
-function onMouseMove( event ) {
-
-	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
-}
-
-window.addEventListener( 'mousemove', onMouseMove );
-window.addEventListener('mousedown', yesDragging );
-window.addEventListener('mouseup', noDragging );
-
+// MAKE CUBES
 var bigCubeGeometry = new THREE.BoxGeometry( 3, 3, 3 );
 bigCubeGeometry.name = "bigCube";
 var bigCubeMaterial = new THREE.MeshBasicMaterial( { color: 000000, wireframe: true } );
@@ -88,19 +66,66 @@ yCrossSection.position.setX(-1);
 // zCrossSection.position.setZ(1);
 
 var smallCubeGeometry = new THREE.BoxGeometry(1,1,1);
+
 smallCubeGeometry.name = "smallCubeGeometry"
-var smallCubeMaterial = new THREE.MeshBasicMaterial( {color: 0x00ff00, wireframe: false });
+var smallCubeMaterial = new THREE.MeshBasicMaterial( {vertexColors: THREE.FaceColors });
 var smallCube = new THREE.Mesh(smallCubeGeometry, smallCubeMaterial);
 scene.add(smallCube);
-// smallCube.position.setY(-1);
+smallCube.position.setY(-1);
 smallCube.position.setX(-1);
 
-xCrossSection.add(smallCube);
-// xCrossSection.add(smallCube);
+// bigCube.add(smallCube);
+// scene.add(smallCube);
+// let cubeArray = [];
+
+// make cubes
+// let newCubes = [];
+// let cubeArray = [];
+// for (var i = 0; i < 27; i++) {
+//   newCubes.push(new THREE.Mesh(smallCubeGeometry, smallCubeMaterial));
+// }
+//   for (var x = -1; x <= 1; x++) {
+//     for (var y = -1; y <= 1; y++) {
+//         for (var z = -1; z <= 1; z++) {
+//           let cube = newCubes.pop();
+//           cube.position.setX(x);
+//           cube.position.setY(y);
+//           cube.position.setZ(z);
+//           cubeArray.push(cube);
+//
+//     }
+//   }
+// };
+// cubeArray.forEach((cube) =>scene.add(cube))
+
 
 // crossSection.add(bigCube);
 
 camera.position.z = 5;
+
+let dragging = false;
+let startX = 0;
+let selectStartX = 0;
+let selectStartY = 0;
+
+function yesDragging(event){
+  dragging = true;
+  selectMouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+  selectMouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+  selectStartX = ( event.clientX / window.innerWidth ) * 2 - 1;
+  selectStartY = - ( event.clientY / window.innerHeight ) * 2 + 1;
+}
+
+function onMouseMove( event ) {
+
+	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+}
+
+window.addEventListener( 'mousemove', onMouseMove );
+window.addEventListener('mousedown', yesDragging );
+window.addEventListener('mouseup', noDragging );
 
 
 
@@ -162,9 +187,10 @@ cubeBoundaryBox.setFromObject(smallCube);
 
 function noDragging(event){
   dragging = false;
-  cubeBoundaryBox.setFromObject(smallCube);
+  // cubeBoundaryBox.setFromObject(smallCube);
   // cubeBoundaryBox = smallCubeGeometry.computeBoundingBox();
   reset = false;
+  // THREE.SceneUtils.detach( smallCube, yCrossSection, scene );
 }
 
 
@@ -177,13 +203,21 @@ let selectCubesX = function(xCrossSection){
     // cubeBoundaryBox.setFromObject(smallCube);
     boundaryBoxX.setFromObject(xCrossSection);
     cubeBoundaryBox.setFromObject(cube);
+    // cube.worldToLocal(cube.getWorldPosition());
+
     // boundaryBoxX = xCrossSectionGeometry.computeBoundingBox();
     if (boundaryBoxX.containsPoint(cubeBoundaryBox.getCenter()) === true){
-      xCrossSection.add(cube);
+      // yCrossSection.remove(cube);
+      // xCrossSection.add(cube);
       if (reset === false && ySwitched === true){
-        cube.position.setY(smallCube.position.y + 1);
-        cube.position.setX(smallCube.position.x - 1);
+        // cube.position.setY(0);
+        // cube.position.setX(smallCube.parent.position.y);
+        // cube.worldToLocal(cube.getWorldPosition());
         // smallCube.setWorldPosition(xCrossSection.position);
+        THREE.SceneUtils.detach( smallCube, smallCube.parent, scene );
+
+        THREE.SceneUtils.attach( cube, scene, xCrossSection );
+
         cubeBoundaryBox.setFromObject(cube);
 
         // cubeBoundaryBox = smallCubeGeometry.computeBoundingBox();
@@ -199,12 +233,22 @@ let selectCubesY = function(yCrossSection){
     // cubeBoundaryBox.setFromObject(smallCube);
     boundaryBoxY.setFromObject(yCrossSection);
     cubeBoundaryBox.setFromObject(cube);
+
     // boundaryBoxY = yCrossSectionGeometry.computeBoundingBox();
     if (boundaryBoxY.containsPoint(cubeBoundaryBox.getCenter()) === true){
-      yCrossSection.add(cube);
+      // yCrossSection.remove(cube);
+      // yCrossSection.add(cube);
+      // cubeBoundaryBox.setFromObject(cube);
+
+      // cube.worldToLocal(cube.getWorldPosition());
+
       if (reset === false && xSwitched === true){
-        cube.position.setX(smallCube.position.x + 1);
-        cube.position.setY(smallCube.position.y - 1);
+        // cube.position.setX(0);
+        // cube.position.setY(smallCube.parent.position.x);
+        THREE.SceneUtils.detach( smallCube, smallCube.parent, scene );
+
+        THREE.SceneUtils.attach( cube, scene, yCrossSection );
+
         cubeBoundaryBox.setFromObject(cube);
 
         // cubeBoundaryBox = smallCubeGeometry.computeBoundingBox();
@@ -288,12 +332,12 @@ let selectCubesY = function(yCrossSection){
 // }
 
 //
-controls = new THREE.OrbitControls(camera, renderer.domElement);
+// controls = new THREE.OrbitControls(camera, renderer.domElement);
 
 
 
 var render = function () {
-  controls.enableRotate = false;
+  // controls.enableRotate = false;
   requestAnimationFrame( render );
 
   raycaster.setFromCamera( selectMouse, camera );
@@ -329,10 +373,10 @@ var render = function () {
 
   };
 
-  if (intersects.length === 0){
-    controls.enableRotate = true;
-  };
-  controls.update();
+  // if (intersects.length === 0){
+  //   controls.enableRotate = true;
+  // };
+  // controls.update();
 };
 
 
