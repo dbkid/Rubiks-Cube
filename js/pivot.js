@@ -116,8 +116,6 @@ function onMouseMove( event ) {
 function noDragging(event){
   dragging = false;
   reset = false;
-
-
 }
 
 window.addEventListener( 'mousemove', onMouseMove );
@@ -178,6 +176,26 @@ let reset = false;
 let ySwitched = false;
 let xSwitched = true;
 
+let selectCubes = function(crossSection){
+  cubeArray.forEach( (cube) => {
+
+      boundaryBoxX.setFromObject(xCrossSection);
+      cubeBoundaryBox.setFromObject(cube);
+
+      if (boundaryBoxX.containsPoint(cubeBoundaryBox.getCenter()) === true){
+
+        if (reset === false){
+          THREE.SceneUtils.detach( cube, cube.parent, scene );
+          THREE.SceneUtils.attach( cube, scene, CrossSection );
+          cubeBoundaryBox.setFromObject(cube);
+          reset = true;
+          xSwitched = true;
+          ySwitched = false;
+        }
+      }
+    });
+}
+//
 let selectCubesX = function(xCrossSection){
   cubeArray.forEach( (cube) => {
 
@@ -186,7 +204,7 @@ let selectCubesX = function(xCrossSection){
 
     if (boundaryBoxX.containsPoint(cubeBoundaryBox.getCenter()) === true){
 
-      // if (reset === false && ySwitched === true){
+      if (reset === false && ySwitched === true){
         THREE.SceneUtils.detach( cube, cube.parent, scene );
         THREE.SceneUtils.attach( cube, scene, xCrossSection );
         cubeBoundaryBox.setFromObject(cube);
@@ -194,31 +212,32 @@ let selectCubesX = function(xCrossSection){
         xSwitched = true;
         ySwitched = false;
       }
-    // }
-  });
-};
-
-
-let selectCubesY = function(yCrossSection){
-  cubeArray.forEach( (cube) => {
-    boundaryBoxY.setFromObject(yCrossSection);
-    cubeBoundaryBox.setFromObject(cube);
-
-    if (boundaryBoxY.containsPoint(cubeBoundaryBox.getCenter()) === true){
-
-      // if (reset === false && xSwitched === true){
-
-        THREE.SceneUtils.detach( cube, cube.parent, scene );
-        THREE.SceneUtils.attach( cube, scene, yCrossSection );
-        cubeBoundaryBox.setFromObject(cube);
-
-        reset = true;
-        ySwitched = true;
-        xSwitched = false;
-      // }
     }
   });
+  
 };
+
+//
+// let selectCubesY = function(yCrossSection){
+//   cubeArray.forEach( (cube) => {
+//     boundaryBoxY.setFromObject(yCrossSection);
+//     cubeBoundaryBox.setFromObject(cube);
+//
+//     if (boundaryBoxY.containsPoint(cubeBoundaryBox.getCenter()) === true){
+//
+//       if (reset === false && xSwitched === true){
+//
+//         THREE.SceneUtils.detach( cube, cube.parent, scene );
+//         THREE.SceneUtils.attach( cube, scene, yCrossSection );
+//         cubeBoundaryBox.setFromObject(cube);
+//
+//         reset = true;
+//         ySwitched = true;
+//         xSwitched = false;
+//       }
+//     }
+//   });
+// };
 
 // RENDER
 
