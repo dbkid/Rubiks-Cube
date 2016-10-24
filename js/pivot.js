@@ -66,8 +66,21 @@ var color = new THREE.Color().setRGB(1, 0, 0);
 // smallCubeGeometry.faces[5].color.setHex(FFFF00);
 // smallCubeGeometry.faces[6].color.setHex(FFFF00);
 
-var smallCubeMaterial = new THREE.MeshBasicMaterial( { wireframe: true, color: 000000 });
+var smallCubeMaterials = [
+    new THREE.MeshBasicMaterial({color:"orange"}),
+    new THREE.MeshBasicMaterial({color:"green"}),
+    new THREE.MeshBasicMaterial({color:"white"}),
+    new THREE.MeshBasicMaterial({color:"blue"}),
+    new THREE.MeshBasicMaterial({color:"red"}),
+    new THREE.MeshBasicMaterial({color:"yellow"}),
+];
+// Create a MeshFaceMaterial, which allows the cube to have different materials on each face
+var smallCubeMaterial = new THREE.MeshFaceMaterial(smallCubeMaterials);
 var smallCube = new THREE.Mesh(smallCubeGeometry, smallCubeMaterial);
+
+
+// var smallCubeMaterial = new THREE.MeshBasicMaterial( { wireframe: true, color: 000000 });
+// var smallCube = new THREE.Mesh(smallCubeGeometry, smallCubeMaterial);
 
 
 let newCubes = [];

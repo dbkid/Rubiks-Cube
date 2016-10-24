@@ -15,10 +15,32 @@ var mouse = new THREE.Vector2();
 // MAKE CUBES
 var bigCubeGeometry = new THREE.BoxGeometry( 3, 3, 3 );
 bigCubeGeometry.name = "bigCube";
-var bigCubeMaterial = new THREE.MeshBasicMaterial( { color: 000000, wireframe: true } );
-var bigCube = new THREE.Mesh( bigCubeGeometry, bigCubeMaterial );
+// var bigCubeMaterial = new THREE.MeshBasicMaterial( { color: 000000, wireframe: true } );
+// var bigCube = new THREE.Mesh( bigCubeGeometry, bigCubeMaterial );
 // bigCube.rotation.x = Math.PI/4;
 // bigCube.rotation.x = Math.PI/4;
+
+
+
+// bigCubeGeometry.faces[1].color.set(0x00ff00);
+// bigCubeGeometry.faces[5].color.set("red");
+
+var color = new THREE.Color().setRGB(1, 1, 1);
+var bigCubeMaterial = new THREE.MeshBasicMaterial( { color: color, wireframe: true });
+var bigCube = new THREE.Mesh(bigCubeGeometry, bigCubeMaterial);
+
+// var bigCubeMaterials = [
+//     new THREE.MeshBasicMaterial({color:"orange"}),
+//     new THREE.MeshBasicMaterial({color:"green"}),
+//     new THREE.MeshBasicMaterial({color:"white"}),
+//     new THREE.MeshBasicMaterial({color:"blue"}),
+//     new THREE.MeshBasicMaterial({color:"red"}),
+//     new THREE.MeshBasicMaterial({color:"yellow"}),
+// ];
+// // Create a MeshFaceMaterial, which allows the cube to have different materials on each face
+// var bigCubeMaterial = new THREE.MeshFaceMaterial(bigCubeMaterials);
+// var bigCube = new THREE.Mesh(bigCubeGeometry, bigCubeMaterial);
+
 scene.add( bigCube );
 
 var xCrossSectionGeometry = new THREE.BoxGeometry(3,1,3);
@@ -73,6 +95,7 @@ var smallCube = new THREE.Mesh(smallCubeGeometry, smallCubeMaterial);
 scene.add(smallCube);
 smallCube.position.setY(-1);
 smallCube.position.setX(-1);
+
 
 // bigCube.add(smallCube);
 // scene.add(smallCube);
@@ -332,7 +355,7 @@ let selectCubesY = function(yCrossSection){
 // }
 
 //
-// controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls = new THREE.OrbitControls(camera, renderer.domElement);
 
 
 
@@ -376,7 +399,7 @@ var render = function () {
   // if (intersects.length === 0){
   //   controls.enableRotate = true;
   // };
-  // controls.update();
+  controls.update();
 };
 
 
