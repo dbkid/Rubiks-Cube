@@ -116,6 +116,7 @@ function onMouseMove( event ) {
 function noDragging(event){
   dragging = false;
   reset = false;
+  // snap();
 }
 
 window.addEventListener( 'mousemove', onMouseMove );
@@ -126,6 +127,13 @@ window.addEventListener('mouseup', noDragging );
 
 
 // DRAG CROSS SECTIONS
+
+let snap = function(){
+  if (pivot.rotation.equals(bigCube.rotation) === false) {
+    pivot.rotation.set(0,0,0);
+  }
+
+}
 
 
 let dragXCrossSection = function(obj){
@@ -184,14 +192,14 @@ let selectCubes = function(crossSection){
 
       if (boundaryBoxX.containsPoint(cubeBoundaryBox.getCenter()) === true){
 
-        if (reset === false){
+        // if (reset === false){
           THREE.SceneUtils.detach( cube, cube.parent, scene );
           THREE.SceneUtils.attach( cube, scene, CrossSection );
           cubeBoundaryBox.setFromObject(cube);
           reset = true;
           xSwitched = true;
           ySwitched = false;
-        }
+        // }
       }
     });
 }
@@ -204,17 +212,17 @@ let selectCubesX = function(xCrossSection){
 
     if (boundaryBoxX.containsPoint(cubeBoundaryBox.getCenter()) === true){
 
-      if (reset === false && ySwitched === true){
+      // if (reset === false && ySwitched === true){
         THREE.SceneUtils.detach( cube, cube.parent, scene );
         THREE.SceneUtils.attach( cube, scene, xCrossSection );
         cubeBoundaryBox.setFromObject(cube);
         reset = true;
         xSwitched = true;
         ySwitched = false;
-      }
+      // }
     }
   });
-  
+
 };
 
 //

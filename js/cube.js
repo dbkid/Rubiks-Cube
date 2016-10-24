@@ -117,6 +117,12 @@ function noDragging(event){
   dragging = false;
   reset = false;
 
+  crossSections.forEach((crossSection) => {
+    if (crossSection.rotation.equals(bigCube.rotation) === false) {
+      crossSection.rotation.set(0,0,0);
+    };
+  }
+);
 
 }
 
@@ -142,6 +148,9 @@ let dragXCrossSection = function(obj){
       startX = mouse.x;
     }
   }
+  // if (obj.rotation.equals(bigCube.rotation) === false) {
+  //   obj.rotation.set(0,0,0);
+  // }
 };
 
 let startY = 0;
@@ -157,6 +166,9 @@ let dragYCrossSection = function(obj){
       startY = mouse.y;
     }
   }
+  // if (obj.rotation.equals(bigCube.rotation) === false) {
+  //   obj.rotation.set(0,0,0);
+  // }
 };
 
 
