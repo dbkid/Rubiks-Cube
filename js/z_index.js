@@ -52,11 +52,11 @@ for (var x = -1; x <= 1; x++) {
   scene.add(newCrossSection);
   crossSections.push(newCrossSection);
 }
-// for (var z = -1; z <= 1; z++) {
-//   let newCrossSection = new THREE.Mesh(zCrossSectionGeometry, crossSectionMaterial);
-//   newCrossSection.position.setZ(z);
-//   crossSections.push(newCrossSection);
-// }
+for (var z = -1; z <= 1; z++) {
+  let newCrossSection = new THREE.Mesh(zCrossSectionGeometry, crossSectionMaterial);
+  newCrossSection.position.setZ(z);
+  crossSections.push(newCrossSection);
+}
 
 // make cubes
 var smallCubeGeometry = new THREE.BoxGeometry(1,1,1);
@@ -122,13 +122,10 @@ var selectMouse = new THREE.Vector2();
 function yesDragging(event){
   dragging = true;
 
-
   selectMouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
   selectMouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
   selectStartX = ( event.clientX / window.innerWidth ) * 2 - 1;
   selectStartY = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
-
 
 }
 
@@ -136,38 +133,57 @@ function onMouseMove( event ) {
 	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 
-  if (dragging === true){
+  raycaster.setFromCamera( selectMouse, camera );
+
+
+  if (dragging === true && needToPick === true){
+    intersects = raycaster.intersectObjects( scene.children );
+
     if (Math.abs(selectMouse.y - mouse.y) < 5 && Math.abs(selectMouse.x - mouse.x) < 5){
       yComponent = Math.abs(selectMouse.y - mouse.y);
       xComponent = Math.abs(selectMouse.x - mouse.x);
     }
-  }
 
-    // if ((Math.abs(selectStartX - mouse.x) >= Math.abs(selectStartY - mouse.y)) && Math.abs(selectStartX - mouse.x) < 5 && needToPick === true){
-    if (xComponent >= yComponent && needToPick === true){
-      selected = "xCrossSection";
-      axis = "x";
-      needToSelect = true;
-      needToPick = false;
+    if (intersects !== null){
+      for (var i = 0; i < intersects.length; i++){
+      // if ((Math.abs(selectStartX - mouse.x) >= Math.abs(selectStartY - mouse.y)) && Math.abs(selectStartX - mouse.x) < 5 && needToPick === true){
+        if (xComponent >= yComponent && needToPick === true && intersects[i].object.geometry.name === "xCrossSection" && intersects[i].object.position.y !== intersects[i].face.normal.y){
+          selected = "xCrossSection";
+          axis = "x";
+          needToSelect = true;
+          needToPick = false;
+        }
+        // else if ((Math.abs(selectStartY - mouse.y) > Math.abs(selectStartX - mouse.x)) && Math.abs(selectStartY - mouse.y) < 5 && needToPick === true){
+        else if (yComponent > xComponent && needToPick === true && intersects[i].object.geometry.name === "yCrossSection" && intersects[i].object.position.x !== intersects[i].face.normal.x){
+          selected = "yCrossSection";
+          axis = "y";
+          needToSelect = true;
+          needToPick = false;
+        }
+
+        else if (intersects[i].object.geometry.name === "zCrossSection" && intersects[i].object.position.z !== intersects[i].face.normal.z){
+          selected = "zCrossSection";
+          needToPick = false;
+          needToSelect = true;
+        };
+      }
     }
-    // else if ((Math.abs(selectStartY - mouse.y) > Math.abs(selectStartX - mouse.x)) && Math.abs(selectStartY - mouse.y) < 5 && needToPick === true){
-    else if (yComponent > xComponent && needToPick === true){
-      selected = "yCrossSection";
-      axis = "y";
-      needToSelect = true;
-      needToPick = false;
-    }
+
+
+
+  }
 
 
 }
 
 
 function noDragging(event){
-  console.log(snapper);
-  console.log(intersects);
+  // console.log(snapper);
+  // console.log(intersects);
   dragging = false;
   reset = false;
   needToPick = true;
+  selected = null;
 
   // cubeArray.forEach((cube) => {
   //   cube.rotation.set(0,0,0);
@@ -487,16 +503,18 @@ var render = function () {
   controls.enableRotate = false;
   requestAnimationFrame( render );
 
-  raycaster.setFromCamera( selectMouse, camera );
-
-  if (dragging === true ){
-    var intersects = raycaster.intersectObjects( scene.children );
-  }
-  else {
-    intersects = null;
-  }
+  // raycaster.setFromCamera( selectMouse, camera );
+  //
+  // if (dragging === true ){
+  //   var intersects = raycaster.intersectObjects( scene.children );
+  // }
+  // else {
+  //   intersects = null;
+  // }
 
   renderer.render(scene, camera);
+
+
 
   if (intersects !== null && intersects.length > 0){
 
@@ -536,15 +554,16 @@ var render = function () {
         dragYCrossSection(intersects[i].object);
       };
     }
-  }}
-    // else{
-    //   if(intersects[i].object.geometry.name === "zCrossSection"){
-    //     snapper = intersects[i].object;
-    //     // createPivot(intersects[i].object);
-    //     selectCubesZ(intersects[i].object);
-    //     dragZCrossSection(intersects[i].object);
-    //   };
-    // }
+
+    else if ( selected === "zCrossSection" && needToSelect === false ){
+      if(intersects[i].object.geometry.name === "zCrossSection"){
+        snapper = intersects[i].object;
+        // createPivot(intersects[i].object);
+        selectCubesZ(intersects[i].object);
+        dragZCrossSection(intersects[i].object);
+      };
+    }
+  }};
 
 
   if (intersects === null || intersects.length === 0){

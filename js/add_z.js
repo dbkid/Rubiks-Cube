@@ -21,10 +21,6 @@ bigCubeGeometry.name = "bigCube";
 // bigCube.rotation.x = Math.PI/4;
 
 
-
-// bigCubeGeometry.faces[1].color.set(0x00ff00);
-// bigCubeGeometry.faces[5].color.set("red");
-
 var color = new THREE.Color().setRGB(1, 1, 1);
 var bigCubeMaterial = new THREE.MeshBasicMaterial( { color: 000000, wireframe: true });
 var bigCube = new THREE.Mesh(bigCubeGeometry, bigCubeMaterial);
@@ -45,11 +41,11 @@ var crossSectionMaterial = new THREE.MeshFaceMaterial(crossSectionMaterials);
 
 
 scene.add( bigCube );
-
+//
 var xCrossSectionGeometry = new THREE.BoxGeometry(3,1,3);
 var xCrossSectionMaterial = new THREE.MeshBasicMaterial( {color: 0x00ff00, wireframe: true });
 xCrossSectionGeometry.name = "xCrossSection"
-
+//
 var xCrossSection = new THREE.Mesh(xCrossSectionGeometry, crossSectionMaterial);
 scene.add(xCrossSection);
 // bigCube.add(xCrossSection);
@@ -74,9 +70,9 @@ yCrossSectionGeometry.name = "yCrossSection"
 var yCrossSectionMaterial = new THREE.MeshBasicMaterial( {color: 0x00ff00, wireframe: true });
 var yCrossSection = new THREE.Mesh(yCrossSectionGeometry, crossSectionMaterial);
 scene.add(yCrossSection);
-// bigCube.add(yCrossSection);
+bigCube.add(yCrossSection);
 yCrossSection.position.setX(-1);
-//
+// //
 // var yCrossSection2 = new THREE.Mesh(yCrossSectionGeometry, yCrossSectionMaterial);
 // scene.add(yCrossSection2);
 // yCrossSection2.position.setX(0);
@@ -87,7 +83,7 @@ yCrossSection.position.setX(-1);
 
 var zCrossSectionGeometry = new THREE.BoxGeometry(3,3,1);
 zCrossSectionGeometry.name = "zCrossSection"
-var zCrossSectionMaterial = new THREE.MeshBasicMaterial( {color: "black", wireframe: false });
+var zCrossSectionMaterial = new THREE.MeshBasicMaterial( {color: 0x00ff00, wireframe: true });
 var zCrossSection = new THREE.Mesh(zCrossSectionGeometry, zCrossSectionMaterial);
 scene.add(zCrossSection);
 zCrossSection.position.setZ(1);
@@ -142,7 +138,7 @@ function yesDragging(event){
   selectMouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
   selectStartX = ( event.clientX / window.innerWidth ) * 2 - 1;
   selectStartY = - ( event.clientY / window.innerHeight ) * 2 + 1;
-  startRotate = xCrossSection.rotation;
+  // startRotate = xCrossSection.rotation;
 }
 
 function onMouseMove( event ) {
@@ -203,12 +199,12 @@ let dragYCrossSection = function(obj){
 let dragZCrossSection = function(obj){
   let yDelta = startY - mouse.y;
   if(dragging===true){
-    if(yDelta > 0){
-      obj.rotateZ(-.05);
+    if(yDelta < 0){
+      obj.rotateZ(.05);
       startY = mouse.y;
     }
-    else if(yDelta < 0){
-      obj.rotateZ(.05);
+    else if(yDelta > 0){
+      obj.rotateZ(-.05);
       startY = mouse.y;
     }
   }
@@ -216,21 +212,20 @@ let dragZCrossSection = function(obj){
 
 let cubeArray = [smallCube];
 let boundaryBoxX = new THREE.Box3();
-boundaryBoxX.setFromObject(xCrossSection);
+// boundaryBoxX.setFromObject(xCrossSection);
 let boundaryBoxY = new THREE.Box3();
-boundaryBoxY.setFromObject(yCrossSection);
-let boundaryBoxZ = new THREE.Box3();
-boundaryBoxZ.setFromObject(zCrossSection);
+// boundaryBoxY.setFromObject(yCrossSection);
 let cubeBoundaryBox = new THREE.Box3();
+let boundaryBoxZ = new THREE.Box3();
 cubeBoundaryBox.setFromObject(smallCube);
+boundaryBoxZ.setFromObject(zCrossSection);
 
 function noDragging(event){
   dragging = false;
   // cubeBoundaryBox.setFromObject(smallCube);
   // cubeBoundaryBox = smallCubeGeometry.computeBoundingBox();
   reset = false;
-  endRotate = xCrossSection.rotation;
-  selected = null;
+  // endRotate = xCrossSection.rotation;
 
   // if (rotation%Math.PI/2 !== 0){
   //   let remaining = rotation%Math.PI/2;
@@ -255,72 +250,72 @@ function noDragging(event){
     //   xCrossSection.rotateY(remaining);
     // }
 
-      // // //
-      if (xCrossSection.rotation.equals(bigCube.rotation) === false) {
-        let distances = [Math.PI, Math.PI/2, -Math.PI/2, 0]
-        let index = null;
-        let least = 100;
-        let distance = null;
-        console.log("startRotate", startRotate);
-        console.log("endRotate", endRotate);
-        for (var i = 0; i < distances.length; i++) {
-          // distance = Math.abs(xCrossSection.rotation.y - distances[i]);
-
-
-
-          distance = xCrossSection.rotation.y - distances[i];
-          // distance = distances[i]%xCrossSection.rotation.y;
-
-          console.log(distances[i], distance)
-          if (Math.abs(distance) <= Math.abs(least)){
-            least = distance;
-            index = i;
-          };
-
-        }
-
-        console.log("least", least);
-        console.log("endpoint", distances[index]);
-        if (xCrossSection.rotation.z === -Math.PI && index === 3){
-          xCrossSection.rotation.set(0,Math.PI, 0)
-        } else {
-          xCrossSection.rotation.set(0,distances[index],0);
-        }
-
-      };
+      // // // //
+      // if (xCrossSection.rotation.equals(bigCube.rotation) === false) {
+      //   let distances = [Math.PI, Math.PI/2, -Math.PI/2, 0]
+      //   let index = null;
+      //   let least = 100;
+      //   let distance = null;
+      //   console.log("startRotate", startRotate);
+      //   console.log("endRotate", endRotate);
+      //   for (var i = 0; i < distances.length; i++) {
+      //     // distance = Math.abs(xCrossSection.rotation.y - distances[i]);
       //
-      if (yCrossSection.rotation.equals(bigCube.rotation) === false) {
-        distances = [Math.PI, Math.PI/2, -Math.PI/2, 0]
-        index = null;
-        least = 100;
-        distance = null;
-        console.log("startRotate", startRotate);
-        console.log("endRotate", endRotate);
-        for (var i = 0; i < distances.length; i++) {
-          // distance = Math.abs(yCrossSection.rotation.y - distances[i]);
-
-
-
-          distance = yCrossSection.rotation.x - distances[i];
-          // distance = distances[i]%yCrossSection.rotation.y;
-
-          console.log(distances[i], distance)
-          if (Math.abs(distance) <= Math.abs(least)){
-            least = distance;
-            index = i;
-          };
-
-        }
       //
-        console.log("least", least);
-        console.log("endpoint", distances[index]);
-        // if (yCrossSection.rotation.z === -0 && index === 3){
-        //   yCrossSection.rotation.set(Math.PI,0, 0)
-        // } else {
-          yCrossSection.rotation.set(distances[index],0,0);
-        // }
-
-      };
+      //
+      //     distance = xCrossSection.rotation.y - distances[i];
+      //     // distance = distances[i]%xCrossSection.rotation.y;
+      //
+      //     console.log(distances[i], distance)
+      //     if (Math.abs(distance) <= Math.abs(least)){
+      //       least = distance;
+      //       index = i;
+      //     };
+      //
+      //   }
+      //
+      //   console.log("least", least);
+      //   console.log("endpoint", distances[index]);
+      //   if (xCrossSection.rotation.z === -Math.PI && index === 3){
+      //     xCrossSection.rotation.set(0,Math.PI, 0)
+      //   } else {
+      //     xCrossSection.rotation.set(0,distances[index],0);
+      //   }
+      //
+      // };
+      // //
+      // if (yCrossSection.rotation.equals(bigCube.rotation) === false) {
+      //   distances = [Math.PI, Math.PI/2, -Math.PI/2, 0]
+      //   index = null;
+      //   least = 100;
+      //   distance = null;
+      //   console.log("startRotate", startRotate);
+      //   console.log("endRotate", endRotate);
+      //   for (var i = 0; i < distances.length; i++) {
+      //     // distance = Math.abs(yCrossSection.rotation.y - distances[i]);
+      //
+      //
+      //
+      //     distance = yCrossSection.rotation.x - distances[i];
+      //     // distance = distances[i]%yCrossSection.rotation.y;
+      //
+      //     console.log(distances[i], distance)
+      //     if (Math.abs(distance) <= Math.abs(least)){
+      //       least = distance;
+      //       index = i;
+      //     };
+      //
+      //   }
+      // //
+      //   console.log("least", least);
+      //   console.log("endpoint", distances[index]);
+      //   // if (yCrossSection.rotation.z === -0 && index === 3){
+      //   //   yCrossSection.rotation.set(Math.PI,0, 0)
+      //   // } else {
+      //     yCrossSection.rotation.set(distances[index],0,0);
+      //   // }
+      //
+      // };
     // snap(xCrossSection);
     // snap(yCrossSection);
     // snap(xCrossSection);
@@ -450,6 +445,8 @@ let selectCubesY = function(yCrossSection){
   });
 };
 
+
+
 let selectCubesZ = function(zCrossSection){
   cubeArray.forEach( (cube) => {
     boundaryBoxZ.setFromObject(zCrossSection);
@@ -544,7 +541,7 @@ let selectCubesZ = function(zCrossSection){
 //
 controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-    let selected = null;
+
 
 var render = function () {
   controls.enableRotate = false;
@@ -552,7 +549,7 @@ var render = function () {
 
   raycaster.setFromCamera( selectMouse, camera );
 
-  if (dragging === true ){
+  if (dragging === true){
     var intersects = raycaster.intersectObjects( scene.children );
   }
   else {
@@ -562,42 +559,41 @@ var render = function () {
   renderer.render(scene, camera);
 
 
-  if (intersects !== null && intersects.length > 0){
-    for (var i = 0; i < intersects.length; i++) {
+    let selected = null;
 
-      if (intersects[i].object.geometry.name === "xCrossSection" && intersects[i].object.position.y !== intersects[i].face.normal.y){
-        if ((Math.abs(selectStartX - mouse.x) >= Math.abs(selectStartY - mouse.y)) && Math.abs(selectStartX - mouse.x) < 5){
-          selected = "xCrossSection";
-        }
+    if (intersects !== null && intersects.length > 0){
+      if ((Math.abs(selectStartX - mouse.x) >= Math.abs(selectStartY - mouse.y)) && Math.abs(selectStartX - mouse.x) < 5){
+        selected = "xCrossSection";
       }
       // else if ((Math.abs(startY - mouse.y) > Math.abs(startX - mouse.x)) && Math.abs(startY - mouse.y) < 5){
-      else if (intersects[i].object.geometry.name === "yCrossSection" && intersects[i].object.position.x !== intersects[i].face.normal.x){
+      else{
         selected = "yCrossSection";
-      }
-      else if (intersects[i].object.geometry.name === "zCrossSection" && intersects[i].object.position.z !== intersects[i].face.normal.z){
-        selected = "zCrossSection";
       };
 
-      if( selected === "xCrossSection"){
-        if(intersects[i].object.geometry.name === "xCrossSection"){
-          selectCubesX(intersects[i].object);
-          dragXCrossSection(intersects[i].object);
-        };
-      }
-
-      else if( selected === "yCrossSection"){
-        if(intersects[i].object.geometry.name === "yCrossSection"){
-          selectCubesY(intersects[i].object);
-          dragYCrossSection(intersects[i].object);
-        };
-      }
-      else if( selected === "zCrossSection"){
-        if(intersects[i].object.geometry.name === "zCrossSection"){
-          selectCubesZ(intersects[i].object);
-          dragZCrossSection(intersects[i].object);
-        };
+  for (var i = 0; i < intersects.length; i++) {
+    if( selected === "xCrossSection"){
+      if(intersects[i].object.geometry.name === "xCrossSection"){
+        selectCubesX(intersects[i].object);
+        dragXCrossSection(intersects[i].object);
       }
     }
+    // }
+    else if( selected === "yCrossSection"){
+      if(intersects[i].object.geometry.name === "yCrossSection"){
+        selectCubesY(intersects[i].object);
+        dragYCrossSection(intersects[i].object);
+      }
+      else if(intersects[i].object.geometry.name === "zCrossSection"){
+        selectCubesZ(intersects[i].object);
+        dragZCrossSection(intersects[i].object);
+      }
+    }
+    // }
+    // else if ( selected === "zCrossSection"){
+
+    }
+    // }
+
   };
 
   if (intersects === null || intersects.length === 0){

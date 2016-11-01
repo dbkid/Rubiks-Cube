@@ -10,9 +10,6 @@ document.body.appendChild( renderer.domElement );
 var raycaster = new THREE.Raycaster();
 var mouse = new THREE.Vector2();
 
-// var axisHelper = new THREE.AxisHelper( 5 );
-// scene.add( axisHelper );
-
 camera.position.z = 5;
 
 controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -27,7 +24,7 @@ var bigCubeMaterial = new THREE.MeshBasicMaterial( { color: 000000, wireframe: t
 var bigCube = new THREE.Mesh( bigCubeGeometry, bigCubeMaterial );
 scene.add( bigCube );
 
-var crossSectionMaterial = new THREE.MeshBasicMaterial( {color: "black", wireframe: true });
+var crossSectionMaterial = new THREE.MeshBasicMaterial( {color: 0x00ff00, wireframe: true });
 // CrossSectionGeometry.name = "CrossSection"
 
 // make crosssections
@@ -52,11 +49,11 @@ for (var x = -1; x <= 1; x++) {
   scene.add(newCrossSection);
   crossSections.push(newCrossSection);
 }
-// for (var z = -1; z <= 1; z++) {
-//   let newCrossSection = new THREE.Mesh(zCrossSectionGeometry, crossSectionMaterial);
-//   newCrossSection.position.setZ(z);
-//   crossSections.push(newCrossSection);
-// }
+for (var z = -1; z <= 1; z++) {
+  let newCrossSection = new THREE.Mesh(zCrossSectionGeometry, crossSectionMaterial);
+  newCrossSection.position.setZ(z);
+  crossSections.push(newCrossSection);
+}
 
 // make cubes
 var smallCubeGeometry = new THREE.BoxGeometry(1,1,1);
@@ -102,7 +99,6 @@ for (var i = 0; i < 27; i++) {
           cube.position.setY(y);
           cube.position.setZ(z);
           cubeArray.push(cube);
-
     }
   }
 };
@@ -127,51 +123,18 @@ function yesDragging(event){
   selectMouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
   selectStartX = ( event.clientX / window.innerWidth ) * 2 - 1;
   selectStartY = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
-
-
 }
 
 function onMouseMove( event ) {
 	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
-  if (dragging === true){
-    if (Math.abs(selectMouse.y - mouse.y) < 5 && Math.abs(selectMouse.x - mouse.x) < 5){
-      yComponent = Math.abs(selectMouse.y - mouse.y);
-      xComponent = Math.abs(selectMouse.x - mouse.x);
-    }
-  }
-
-    // if ((Math.abs(selectStartX - mouse.x) >= Math.abs(selectStartY - mouse.y)) && Math.abs(selectStartX - mouse.x) < 5 && needToPick === true){
-    if (xComponent >= yComponent && needToPick === true){
-      selected = "xCrossSection";
-      axis = "x";
-      needToSelect = true;
-      needToPick = false;
-    }
-    // else if ((Math.abs(selectStartY - mouse.y) > Math.abs(selectStartX - mouse.x)) && Math.abs(selectStartY - mouse.y) < 5 && needToPick === true){
-    else if (yComponent > xComponent && needToPick === true){
-      selected = "yCrossSection";
-      axis = "y";
-      needToSelect = true;
-      needToPick = false;
-    }
-
-
 }
 
 
 function noDragging(event){
-  console.log(snapper);
-  console.log(intersects);
+
   dragging = false;
   reset = false;
-  needToPick = true;
-
-  // cubeArray.forEach((cube) => {
-  //   cube.rotation.set(0,0,0);
-  // });
 
 
 if (selected === "xCrossSection"){
@@ -334,12 +297,12 @@ let dragZCrossSection = function(obj){
 
 
 let boundaryBoxX = new THREE.Box3();
-// boundaryBoxX.setFromObject(xCrossSection);
+boundaryBoxX.setFromObject(xCrossSection);
 let boundaryBoxY = new THREE.Box3();
-// boundaryBoxY.setFromObject(yCrossSection);
+boundaryBoxY.setFromObject(yCrossSection);
 let boundaryBoxZ = new THREE.Box3();
 let cubeBoundaryBox = new THREE.Box3();
-// cubeBoundaryBox.setFromObject(smallCube);
+cubeBoundaryBox.setFromObject(smallCube);
 
 
 
@@ -362,8 +325,8 @@ let selectCubesX = function(xCrossSection){
       selectedCubes << cube;
 
       // if (reset === false && ySwitched === true){
-        THREE.SceneUtils.detach( cube, cube.parent, bigCube );
-        THREE.SceneUtils.attach( cube, bigCube, xCrossSection );
+        THREE.SceneUtils.detach( cube, cube.parent, scene );
+        THREE.SceneUtils.attach( cube, scene, xCrossSection );
         cubeBoundaryBox.setFromObject(cube);
         reset = true;
         xSwitched = true;
@@ -386,8 +349,8 @@ let selectCubesY = function(yCrossSection){
 
       // if (reset === false && xSwitched === true){
 
-        THREE.SceneUtils.detach( cube, cube.parent, bigCube );
-        THREE.SceneUtils.attach( cube, bigCube, yCrossSection );
+        THREE.SceneUtils.detach( cube, cube.parent, scene );
+        THREE.SceneUtils.attach( cube, scene, yCrossSection );
         cubeBoundaryBox.setFromObject(cube);
 
         reset = true;
@@ -479,10 +442,6 @@ let selected = null;
 let intersects = null;
 let axis = null;
 let needToSelect = false;
-let needToPick = true;
-let xComponent = 0;
-let yComponent = 0;
-
 var render = function () {
   controls.enableRotate = false;
   requestAnimationFrame( render );
@@ -498,11 +457,23 @@ var render = function () {
 
   renderer.render(scene, camera);
 
-  if (intersects !== null && intersects.length > 0){
+  if (intersects !== null ){
 
-  // for (var i = 0; i < intersects.length; i++) {
+  for (var i = 0; i < intersects.length; i++) {
 
-  // }
+    if ((Math.abs(selectStartX - mouse.x) >= Math.abs(selectStartY - mouse.y)) && Math.abs(selectStartX - mouse.x) < 2){
+      selected = "xCrossSection";
+      axis = "x";
+      needToSelect = true;
+
+    }
+    else if ((Math.abs(startY - mouse.y) > Math.abs(startX - mouse.x)) && Math.abs(startY - mouse.y) < 5){
+      selected = "yCrossSection";
+      axis = "y";
+      needToSelect = true;
+
+    }
+  }
   for (var i = 0; i < intersects.length; i++){
     if( selected === "xCrossSection" && needToSelect === true ){
       if(intersects[i].object.geometry.name === "xCrossSection"){
