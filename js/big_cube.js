@@ -53,7 +53,7 @@ xCrossSectionGeometry.name = "xCrossSection"
 var xCrossSection = new THREE.Mesh(xCrossSectionGeometry, crossSectionMaterial);
 scene.add(xCrossSection);
 // bigCube.add(xCrossSection);
-xCrossSection.position.setY(-1);
+xCrossSection.position.setY(1);
 
 // var xCrossSectionGeometry2 = new THREE.BoxGeometry(3,1,3);
 // var xCrossSectionMaterial2 = new THREE.MeshBasicMaterial( {color: 0x00ff00, wireframe: true });
@@ -75,7 +75,7 @@ var yCrossSectionMaterial = new THREE.MeshBasicMaterial( {color: 0x00ff00, wiref
 var yCrossSection = new THREE.Mesh(yCrossSectionGeometry, crossSectionMaterial);
 scene.add(yCrossSection);
 // bigCube.add(yCrossSection);
-yCrossSection.position.setX(-1);
+yCrossSection.position.setX(1);
 //
 // var yCrossSection2 = new THREE.Mesh(yCrossSectionGeometry, yCrossSectionMaterial);
 // scene.add(yCrossSection2);
@@ -91,6 +91,18 @@ var zCrossSectionMaterial = new THREE.MeshBasicMaterial( {color: "black", wirefr
 var zCrossSection = new THREE.Mesh(zCrossSectionGeometry, zCrossSectionMaterial);
 scene.add(zCrossSection);
 zCrossSection.position.setZ(1);
+// var zCrossSectionGeometry = new THREE.BoxGeometry(3,3,1);
+// zCrossSectionGeometry.name = "zCrossSection"
+// var zCrossSectionMaterial = new THREE.MeshBasicMaterial( {color: "black", wireframe: false });
+// var zCrossSection = new THREE.Mesh(zCrossSectionGeometry, zCrossSectionMaterial);
+// scene.add(zCrossSection);
+// zCrossSection.position.setZ(0);
+// var zCrossSectionGeometry = new THREE.BoxGeometry(3,3,1);
+// zCrossSectionGeometry.name = "zCrossSection"
+// var zCrossSectionMaterial = new THREE.MeshBasicMaterial( {color: "black", wireframe: false });
+// var zCrossSection = new THREE.Mesh(zCrossSectionGeometry, zCrossSectionMaterial);
+// scene.add(zCrossSection);
+// zCrossSection.position.setZ(-1);
 
 var smallCubeGeometry = new THREE.BoxGeometry(1,1,1);
 
@@ -199,7 +211,7 @@ let dragYCrossSection = function(obj){
     }
   }
 };
-//
+
 let dragZCrossSection = function(obj){
   let yDelta = startY - mouse.y;
   if(dragging===true){
@@ -213,6 +225,7 @@ let dragZCrossSection = function(obj){
     }
   }
 };
+
 
 let cubeArray = [smallCube];
 let boundaryBoxX = new THREE.Box3();
@@ -321,6 +334,22 @@ function noDragging(event){
         // }
 
       };
+
+      if (zCrossSection.rotation.equals(bigCube.rotation) === false) {
+        distances = [Math.PI, Math.PI/2, -Math.PI/2, 0]
+        index = null;
+        least = 100;
+        distance = null;
+        for (var i = 0; i < distances.length; i++) {
+          distance = zCrossSection.rotation.z - distances[i];
+          if (Math.abs(distance) <= Math.abs(least)){
+            least = distance;
+            index = i;
+          };
+
+        }
+          zCrossSection.rotation.set(zCrossSection.rotation.x,zCrossSection.rotation.y,distances[index]);
+        }
     // snap(xCrossSection);
     // snap(yCrossSection);
     // snap(xCrossSection);
@@ -565,16 +594,16 @@ var render = function () {
   if (intersects !== null && intersects.length > 0){
     for (var i = 0; i < intersects.length; i++) {
 
-      if (intersects[i].object.geometry.name === "xCrossSection" && intersects[i].object.position.y !== intersects[i].face.normal.y){
+      if (intersects[i].object.geometry.name === "xCrossSection" && intersects[i].face.normal.y === 0){
         if ((Math.abs(selectStartX - mouse.x) >= Math.abs(selectStartY - mouse.y)) && Math.abs(selectStartX - mouse.x) < 5){
           selected = "xCrossSection";
         }
       }
       // else if ((Math.abs(startY - mouse.y) > Math.abs(startX - mouse.x)) && Math.abs(startY - mouse.y) < 5){
-      else if (intersects[i].object.geometry.name === "yCrossSection" && intersects[i].object.position.x !== intersects[i].face.normal.x){
+      else if (intersects[i].object.geometry.name === "yCrossSection" && intersects[i].face.normal.x === 0){
         selected = "yCrossSection";
       }
-      else if (intersects[i].object.geometry.name === "zCrossSection" && intersects[i].object.position.z !== intersects[i].face.normal.z){
+      else if (intersects[i].object.geometry.name === "zCrossSection" && intersects[i].face.normal.z === 0){
         selected = "zCrossSection";
       };
 
