@@ -28,6 +28,7 @@ var bigCube = new THREE.Mesh( bigCubeGeometry, bigCubeMaterial );
 scene.add( bigCube );
 
 var crossSectionMaterial = new THREE.MeshBasicMaterial( {visible: false});
+// var yCrossSectionMaterial = new THREE.MeshBasicMaterial( {wireframe: true});
 // CrossSectionGeometry.name = "CrossSection"
 
 // make crosssections
@@ -350,17 +351,33 @@ window.addEventListener('mouseup', noDragging );
 let rotateAxis = new THREE.Vector3();
 let dragXCrossSection = function(obj){
   rotateAxis = new THREE.Vector3(0,1,0);
-  if(dragging===true){
-    let xDelta = startX - mouse.x;
-    if(xDelta < 0){
-      obj.rotateOnAxis(rotateAxis, .05);
-      startX = mouse.x;
+  let xDelta = startX - mouse.x;
+  let yDelta = startY - mouse.y;
+
+    if(dragging===true){
+      if(Math.abs(Math.abs(camera.rotation.z) - (Math.PI/2)) < Math.abs(Math.abs(camera.rotation.z) - 0) && Math.abs(Math.abs(camera.rotation.z) - (Math.PI/2)) < Math.abs(Math.abs(camera.rotation.z) - Math.PI)){
+        if(yDelta > 0){
+          obj.rotateOnAxis(rotateAxis, .05);
+          startY = mouse.y;
+        }
+        else if(yDelta < 0){
+          obj.rotateOnAxis(rotateAxis,-.05);
+          startY = mouse.y;
+        }
+      }
+      else {
+        if(xDelta < 0){
+          obj.rotateOnAxis(rotateAxis, .05);
+          startX = mouse.x;
+        }
+        else if(xDelta > 0){
+          obj.rotateOnAxis(rotateAxis,-.05);
+          startX = mouse.x;
+        }
+      }
     }
-    else if(xDelta > 0){
-      obj.rotateOnAxis(rotateAxis,-.05);
-      startX = mouse.x;
-    }
-  }
+
+
   // if (obj.rotation.equals(bigCube.rotation) === false) {
   //   obj.rotation.set(0,0,0);
   // }
@@ -370,16 +387,68 @@ let startY = 0;
 let dragYCrossSection = function(obj){
   rotateAxis = new THREE.Vector3(1,0,0);
   let yDelta = startY - mouse.y;
+  let xDelta = startX - mouse.x;
+
   if(dragging===true){
-    if(yDelta > 0){
-      obj.rotateOnAxis(rotateAxis, .05);
-      startY = mouse.y;
+    if(Math.abs(Math.abs(camera.rotation.z) - (Math.PI/2)) < Math.abs(Math.abs(camera.rotation.z) - 0) && Math.abs(Math.abs(camera.rotation.z) - (Math.PI/2)) < Math.abs(Math.abs(camera.rotation.z) - Math.PI)){
+      if(xDelta < 0){
+        obj.rotateOnAxis(rotateAxis, .05);
+        startX = mouse.x;
+      }
+      else if(xDelta > 0){
+        obj.rotateOnAxis(rotateAxis,-.05);
+        startX = mouse.x;
+      }
     }
-    else if(yDelta < 0){
-      obj.rotateOnAxis(rotateAxis,-.05);
-      startY = mouse.y;
+    else {
+      if(camera.getWorldPosition().x >= 0){
+        if(yDelta > 0){
+          obj.rotateOnAxis(rotateAxis, .05);
+          startY = mouse.y;
+        }
+        else if(yDelta < 0){
+          obj.rotateOnAxis(rotateAxis,-.05);
+          startY = mouse.y;
+        }
+      }
+      else {
+        if(yDelta < 0){
+          obj.rotateOnAxis(rotateAxis, .05);
+          startY = mouse.y;
+        }
+        else if(yDelta > 0){
+          obj.rotateOnAxis(rotateAxis,-.05);
+          startY = mouse.y;
+        }
+      }
+
     }
   }
+
+
+  // if(dragging===true){
+  //   if(camera.getWorldPosition().x >= 0){
+  //     if(yDelta > 0){
+  //       obj.rotateOnAxis(rotateAxis, .05);
+  //       startY = mouse.y;
+  //     }
+  //     else if(yDelta < 0){
+  //       obj.rotateOnAxis(rotateAxis,-.05);
+  //       startY = mouse.y;
+  //     }
+  //   }
+  //   else {
+  //     if(yDelta < 0){
+  //       obj.rotateOnAxis(rotateAxis, .05);
+  //       startY = mouse.y;
+  //     }
+  //     else if(yDelta > 0){
+  //       obj.rotateOnAxis(rotateAxis,-.05);
+  //       startY = mouse.y;
+  //     }
+  //
+  //   }
+  // }
   // if (obj.rotation.equals(bigCube.rotation) === false) {
   //   obj.rotation.set(0,0,0);
   // }
@@ -401,14 +470,40 @@ let dragYCrossSection = function(obj){
 
 let dragZCrossSection = function(obj){
   let yDelta = startY - mouse.y;
+  let xDelta = startX - mouse.x;
   if(dragging===true){
-    if(yDelta > 0){
-      obj.rotateZ(-.05);
-      startY = mouse.y;
+    if (camera.getWorldDirection().y < 0){
+      if(camera.getWorldDirection().x >=0){
+        if(yDelta < 0){
+          obj.rotateZ(-.05);
+          startY = mouse.y;
+        }
+        else if(yDelta > 0){
+          obj.rotateZ(.05);
+          startY = mouse.y;
+        }
+      }
+      else if (camera.getWorldDirection().x < 0){
+        if(yDelta < 0){
+          obj.rotateZ(.05);
+          startY = mouse.y;
+        }
+        else if(yDelta > 0){
+          obj.rotateZ(-.05);
+          startY = mouse.y;
+        }
+      }
     }
-    else if(yDelta < 0){
-      obj.rotateZ(.05);
-      startY = mouse.y;
+    else {
+      if(xDelta > 0){
+        obj.rotateZ(-.05);
+        startX = mouse.x;
+      }
+      else if(xDelta < 0){
+        obj.rotateZ(.05);
+        startX = mouse.x;
+      }
+
     }
   }
 };
