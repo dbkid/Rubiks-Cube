@@ -1,0 +1,25 @@
+ol, ul {
+	list-style: none;
+}
+
+.group {
+  content: "";
+  clear: both;
+  display: block;
+}
+
+.link{
+  float: left;
+  margin: 0px 50px 0px 50px;
+  font-size: 20px;
+	/*position: absolute;*/
+}
+
+
+.bar{
+  float: left;
+  width: 500px;
+	height: 100px;
+  margin: auto;
+	/*position: relative;*/
+}

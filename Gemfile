@@ -5,3 +5,5 @@ source "https://rubygems.org"
 # gem "rails"
 
 gem 'jquery'
+
+gem 'font-awesome-sass'

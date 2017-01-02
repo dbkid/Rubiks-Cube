@@ -1,35 +1,21 @@
 # Rubiks-Cube
 
-3D Rubik’s Cube.
+3D Rubik’s Cube implemented using [Three.Js](https://threejs.org/).
 
-MVP: 
+Camera rotates to show cube from different angles:
 
-- large cube made of 27 smaller cubes, each face a different color 
-- entire large cube rotatable so can see all sides 
-- each cross section of larger cube rotatable so can change positioning of smaller cubes
+[Rubik's Cube](assets/cube_screenshot.png)
 
-Ideally will look something like this:
+Each cross-section rotates when you drag the mouse:
 
-![Image of Rubiks Cube]
-(https://github.com/dbkid/Rubiks-Cube/blob/master/Rubik's%20Cube.png)
+[Rotating Cross Section](assets/rotating_cross_section.png)
 
+[Drag X Cross Section Code Snippet](assets/drag_x_cross_section.png)
 
-Libraries:
-- will implement using this library: https://threejs.org/
+Cross-sections "snap" back into place:
 
-Implementation Time Line:
+[Snap Back Code Snippet](assets/snapback.png)
 
-Day 1:  
-- get set up
-- play around with three js
-- figure out how to render one simple large 3d cube that rotates
+Smaller cubes "detach" and "reattach" to different cross sections:
 
-Day 2: 
-- break cube into smaller cubes and all cross sections
-- focus on just the 3 horizontal cross sections, figure out how to rotate those 
-
-Day 3: 
-- get entire cube working 
-
-Bonus:
-- have button to automatically scramble cube 
+[Select Cubes Code Snippet](assets/select_cubes.png)
