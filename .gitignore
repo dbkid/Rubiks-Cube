@@ -3,3 +3,5 @@ bundle.js
 bundle.js.map
 Gemfile
 Gemfile.lock
+webpack.config.js
+package.json
