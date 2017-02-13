@@ -10,16 +10,85 @@ ol, ul {
 
 .link{
   float: left;
-  margin: 0px 50px 0px 50px;
   font-size: 20px;
-	/*position: absolute;*/
+	width: 200px;
 }
 
 
 .bar{
-  float: left;
-  width: 500px;
+  width: 600px;
 	height: 100px;
   margin: auto;
-	/*position: relative;*/
+	position: absolute;
+	left: 0;
+	right: 0;
+}
+
+.header{
+	text-align: center;
+	font-family: 'Monoton', cursive;
+	font-size: 60px;
+	margin: 0px;
+	float: left;
+}
+
+.header-bar{
+	width: 800px;
+	position: absolute;
+	margin-right: auto;
+	margin-left: auto;
+	right: 0;
+	left: 0;
+
+}
+
+
+.buttons{
+	height: 93px;
+	float: left;
+	padding: 40px;
+}
+
+#about{
+	float: left;
+	text-align: center;
+
+}
+
+#instructions{
+	float: left;
+	text-align: center;
+
+}
+
+#aboutModal{
+	display: none;
+	z-index: 5;
+	width: 400px;
+	height: 100px;
+	position: absolute;
+	transform: translate(-110px, 60px);
+	font-family: 'Source Code Pro', monospace;
+
+}
+
+#aboutModalContent{
+	z-index: 5;
+
+}
+
+#instructionsModal{
+	z-index: 5;
+	display: none;
+	position: absolute;
+	transform: translate(-210px, 60px);
+	width: 200px;
+	height: 100px;
+	font-family: 'Source Code Pro', monospace;
+}
+
+#instructionsModalContent{
+	z-index: 5;
+	width: 100px;
+	height: 100px;
 }

@@ -6,17 +6,43 @@
 
 		<style>
 			body { margin: 0; }
-			canvas { width: 100%; height: 100%; }
+			canvas { width: 100%; height: 100%; margin-top: 50px; margin-bottom: 50px }
 		</style>
 
 
 		<link rel="stylesheet" href="assets/stylesheet.css"></link>
 		<script src="https://use.fontawesome.com/a16c857cde.js"></script>
 		<link rel="shortcut icon" href="assets/favicon.ico" type="image/x-icon">
+		<link href="https://fonts.googleapis.com/css?family=Monoton" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
 
 	</head>
 	<body>
+		<ul class="group header-bar">
+			<li class="buttons"><button id="instructions">Instructions</button></li>
+			<div id="instructionsModal">
+				<p id="instructionsContent">
+					To Play: </br></br>
+					Click and drag mouse off of cube to rotate camera. </br></br>
+					Click and drag mouse on cube to rotate selected cross section. </br>
+				</p>
 
+			</div>
+			<li><h1 class="header">Rubik's Cube</h1></li>
+			<li class="buttons"><button id="about">About</button></li>
+			<div id="aboutModal">
+				<p id="aboutModalContent">
+					This Rubik’s Cube is programmed using the Three.js library. </br></br>
+					The cube is made up of 27 small cubes and 9 cross sections. The code is structured so that each cross section gets its coordinates and rotation in terms of its position within the big cube. Each small cube gets its coordinates and rotation from its position within a cross section. </br></br>
+					When you start moving your mouse there are multiple cross sections you could be intending to select. The code determines which cross section to choose based on whether the X or Y component of your mouse is greater during the fist few pixels of mouse movement as well as the current rotation of the big cube.</br></br>
+					Once you select a cross section, the code checks to see which small cubes are contained within that cross section. The contained small cubes are then attached to that cross section so they rotate with it as you drag your mouse. After the rotation is complete, the small cubes are detached from the cross section. This is necessary because once the small cubes are rotated their parent cross sections change. </br></br>
+					When you release a cross section, you probably will not release it at a perfect right angle to the big cube. This is a problem because if the cross section and its contained small cubes are not at a perfect right angle to the big cube, their coordinates will gradually get out of sync with each other. To fix this problem, the cross sections “snap” back into place. When you release your mouse the code assesses which right angle the cross section is closest to and automatically moves the cross section to that location.</br></br>
+				</p>
+
+			</div>
+		</ul>
+
+		<script src="Header.js"></script>
 
 		<script src="node_modules/jquery/dist/jquery.js"></script>
     <script src="js/three.js"></script>

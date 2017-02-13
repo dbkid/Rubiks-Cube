@@ -24,6 +24,7 @@ bigCubeGeometry.name = "bigCube";
 var bigCubeMaterial = new THREE.MeshBasicMaterial( { visible: false } );
 var bigCube = new THREE.Mesh( bigCubeGeometry, bigCubeMaterial );
 scene.add( bigCube );
+bigCube.rotateX(4/Math.PI);
 
 var crossSectionMaterial = new THREE.MeshBasicMaterial( {visible: false});
 
