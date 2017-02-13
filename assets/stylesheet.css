@@ -9,10 +9,25 @@ ol, ul {
 }
 
 .link{
-  float: left;
+	float: left;
   font-size: 20px;
 	width: 200px;
 }
+
+.github{
+	float: left;
+}
+
+.linkedIn{
+	float: right;
+}
+
+.portfolio{
+	float: left;
+	padding-left: 65px;
+	padding-right: 50px;
+}
+
 
 
 .bar{
