@@ -11,7 +11,9 @@ var raycaster = new THREE.Raycaster();
 var mouse = new THREE.Vector2();
 
 
-camera.position.z = 5;
+camera.position.z = 3;
+camera.position.y = 3;
+camera.position.x = 3;
 
 controls = new THREE.OrbitControls(camera, renderer.domElement);
 
@@ -24,7 +26,7 @@ bigCubeGeometry.name = "bigCube";
 var bigCubeMaterial = new THREE.MeshBasicMaterial( { visible: false } );
 var bigCube = new THREE.Mesh( bigCubeGeometry, bigCubeMaterial );
 scene.add( bigCube );
-bigCube.rotateX(4/Math.PI);
+
 
 var crossSectionMaterial = new THREE.MeshBasicMaterial( {visible: false});
 
@@ -440,6 +442,8 @@ let yComponent = 0;
 let crossSection = null;
 
 var render = function () {
+
+
   controls.enableRotate = false;
 
   requestAnimationFrame( render );
