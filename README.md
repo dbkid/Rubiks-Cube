@@ -1,6 +1,6 @@
 # Rubiks-Cube
 
-3D Rubik’s Cube implemented using [Three.Js](https://threejs.org/).
+[3D Rubik’s Cube](http://daniellebuterakeefe.com/Rubiks-Cube/index.html) implemented using [Three.Js](https://threejs.org/).
 
 Camera rotates to show cube from different angles:
 
