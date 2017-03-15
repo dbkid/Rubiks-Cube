@@ -6,7 +6,7 @@
 
 		<style>
 			body { margin: 0; }
-			canvas { width: 100%; height: 100%; margin-top: 50px; margin-bottom: 50px }
+			canvas { width: 100%; height: 100%; margin-top: 0; margin-bottom: 50px }
 		</style>
 
 
@@ -32,7 +32,7 @@
 			<li class="buttons"><button id="about">About</button></li>
 			<div id="aboutModal">
 				<p id="aboutModalContent">
-					This Rubik’s Cube is programmed using the Three.js library. </br></br>
+					This Rubik’s Cube is programmed using the Three.js library and is a work in progress. </br></br>
 					The cube is made up of 27 small cubes and 9 cross sections. The code is structured so that each cross section gets its coordinates and rotation in terms of its position within the big cube. Each small cube gets its coordinates and rotation from its position within a cross section. </br></br>
 					When you start moving your mouse there are multiple cross sections you could be intending to select. The code determines which cross section to choose based on whether the X or Y component of your mouse is greater during the fist few pixels of mouse movement as well as the current rotation of the big cube.</br></br>
 					Once you select a cross section, the code checks to see which small cubes are contained within that cross section. The contained small cubes are then attached to that cross section so they rotate with it as you drag your mouse. After the rotation is complete, the small cubes are detached from the cross section. This is necessary because once the small cubes are rotated their parent cross sections change. </br></br>
@@ -53,7 +53,7 @@
 			<!-- <div class="group bar"> -->
 				<li class="link"><a class="linkedIn" href="https://www.linkedin.com/in/danielle-butera-keefe-60b92335?trk=nav_responsive_tab_profile"><span class="fa fa-linkedin"></span></a></li>
 				<li class="link"><a class = "portfolio" href="http://daniellebuterakeefe.com/">Portfolio</a></li>
-				<li class="link"><a class = "github" href="https://github.com/dbkid"><span class="fa fa-github"></span></a></li>
+				<li class="link"><a class = "github" href="https://github.com/dbkid/Rubiks-Cube"><span class="fa fa-github"></span></a></li>
 			<!-- </div> -->
 		</ul>
 

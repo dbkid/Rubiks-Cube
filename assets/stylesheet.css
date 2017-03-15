@@ -15,28 +15,32 @@ ol, ul {
 }
 
 .github{
-	float: left;
+	float: right;
 }
 
 .linkedIn{
-	float: right;
+	float: left;
 }
 
 .portfolio{
 	float: left;
 	padding-left: 65px;
-	padding-right: 50px;
 }
 
 
 
 .bar{
   width: 600px;
-	height: 100px;
   margin: auto;
-	position: absolute;
-	left: 0;
 	right: 0;
+	left: 0;
+	bottom:0;
+	 position:fixed;
+	 z-index:150;
+	 _position:absolute;
+	 _top:expression(eval(document.documentElement.scrollTop+
+			 (document.documentElement.clientHeight-this.offsetHeight)));
+	 height:35px;
 }
 
 .header{
