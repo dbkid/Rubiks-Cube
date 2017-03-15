@@ -10,7 +10,7 @@ document.body.appendChild( renderer.domElement );
 var raycaster = new THREE.Raycaster();
 var mouse = new THREE.Vector2();
 
-
+//start cube at angle
 camera.position.z = 3;
 camera.position.y = 3;
 camera.position.x = 3;
@@ -20,7 +20,7 @@ controls = new THREE.OrbitControls(camera, renderer.domElement);
 let selectedCubes = [];
 
 
-// MAKE CUBES
+// make big cube
 var bigCubeGeometry = new THREE.BoxGeometry( 3, 3, 3 );
 bigCubeGeometry.name = "bigCube";
 var bigCubeMaterial = new THREE.MeshBasicMaterial( { visible: false } );
@@ -30,7 +30,7 @@ scene.add( bigCube );
 
 var crossSectionMaterial = new THREE.MeshBasicMaterial( {visible: false});
 
-// make crosssections
+//initialize cross section geometries, materials
 let crossSections = [];
 var zCrossSectionGeometry = new THREE.BoxGeometry(3,3,1);
 zCrossSectionGeometry.name = "zCrossSection";
@@ -43,7 +43,7 @@ let xCrossSections = [];
 let yCrossSections = [];
 let zCrossSections = [];
 
-
+//make cross sections, assign each cross section a position
 for (var y = -1; y <= 1; y++) {
   let newCrossSection = new THREE.Mesh(xCrossSectionGeometry, crossSectionMaterial);
   newCrossSection.position.setY(y);
@@ -63,7 +63,7 @@ for (var z = -1; z <= 1; z++) {
   zCrossSections.push(newCrossSection);
 }
 
-// make cubes
+// initialize small cube geometry, materials
 var smallCubeGeometry = new THREE.BoxGeometry(1,1,1);
 smallCubeGeometry.name = "smallCubeGeometry"
 var color = new THREE.Color().setRGB(1, 0, 0);
@@ -77,10 +77,10 @@ var smallCubeMaterials = [
     new THREE.MeshBasicMaterial({color:"yellow"})
 ];
 
-// Create a MeshFaceMaterial, which allows the cube to have different materials on each face
+// create a MeshFaceMaterial, which allows each small cube to have a different material (color) on each face
 var smallCubeMaterial = new THREE.MeshFaceMaterial(smallCubeMaterials);
 
-
+//create 27 small cubes, properly position within big cube
 let newCubes = [];
 let cubeArray = [];
 for (var i = 0; i < 27; i++) {
@@ -111,10 +111,11 @@ let selectStartX = 0;
 let selectStartY = 0;
 var selectMouse = new THREE.Vector2();
 
+//on mouse click, start dragging
 function yesDragging(event){
   dragging = true;
 
-
+  //record in vector x and y components of mouse click, normalized
   selectMouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
   selectMouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
   selectStartX = ( event.clientX / window.innerWidth ) * 2 - 1;
@@ -129,19 +130,25 @@ function onMouseMove( event ) {
 	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 
+  //calculate x and y components during first 5 pxs of dragging mouse movement
+  //used later to decide which cross section user intended to select
   if (dragging === true && needToPick === true && Math.abs(selectMouse.y - mouse.y) < 5 && Math.abs(selectMouse.x - mouse.x) < 5){
     yComponent = Math.abs(selectMouse.y - mouse.y);
     xComponent = Math.abs(selectMouse.x - mouse.x);
   }
 
-
+    // set raycaster starting at mouse position (selectMouse) in direction of camera
     raycaster.setFromCamera( selectMouse, camera );
     if (dragging === false){
       intersects = [];
     }
 
     else if (dragging === true && needToPick === true){
+      // get all geometries intersected by raycaster [all geometries the mouse is clicking on]
       intersects = raycaster.intersectObjects( scene.children );
+
+        //figure out which cross section user intended to select
+        //use intersected geometries, compare x and y mouse movement, check geometry properties
 
         for (var i = 0; i < intersects.length; i++) {
           if (xComponent >= yComponent && needToPick === true && intersects[i].face.normal.y === 0 && intersects[i].object.geometry.name === "xCrossSection"){
@@ -176,11 +183,11 @@ function noDragging(event){
   needToPick = true;
   crossSection = null;
 
-
-
 if (selected === "xCrossSection"){
 
-
+    //[snapper is set to selected cross section in render]
+    //when mouse is released (no dragging), calculate nearest right angle w respect to bigCube (if not already there)
+    //set selected cross section's rotation to that angle
     if (snapper.rotation.equals(bigCube.rotation) === false) {
       let distances = [Math.PI, Math.PI/2, -Math.PI/2, 0]
       let index = null;
@@ -218,7 +225,6 @@ if (selected === "xCrossSection"){
 
         distance = snapper.rotation.x - distances[i];
 
-        console.log(distances[i], distance)
         if (Math.abs(distance) <= Math.abs(least)){
           least = distance;
           index = i;
@@ -260,6 +266,7 @@ window.addEventListener('mouseup', noDragging );
 
 
 // DRAG CROSS SECTIONS
+//rotate cross section on appropriate axis while mouse is down, in direction of mouse movement
 
 let rotateAxis = new THREE.Vector3();
 let dragXCrossSection = function(obj){
@@ -330,7 +337,8 @@ let ySwitched = false;
 let xSwitched = true;
 
 
-
+//check to see which small cubes are contained within selected cross section
+//set those small cubes as children of selected cross section
 let selectCubesX = function(xCrossSection){
   cubeArray.forEach( (cube) => {
 
@@ -356,7 +364,6 @@ let selectCubesY = function(yCrossSection){
   cubeArray.forEach( (cube) => {
     boundaryBoxY.setFromObject(yCrossSection);
     cubeBoundaryBox.setFromObject(cube);
-    // boundaryBoxY.union(cubeBoundaryBox);
 
     if (boundaryBoxY.containsPoint(cubeBoundaryBox.getCenter()) === true){
       selectedCubes << cube;
@@ -443,7 +450,7 @@ let crossSection = null;
 
 var render = function () {
 
-
+  //do not rotate camera when clicking on cube
   controls.enableRotate = false;
 
   requestAnimationFrame( render );
@@ -479,6 +486,7 @@ var render = function () {
 
 
 
+  //if not clicking on cube, let camera rotate 
   if (intersects.length === 0){
     controls.enableRotate = true;
   };
