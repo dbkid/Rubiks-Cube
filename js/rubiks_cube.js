@@ -398,44 +398,6 @@ let selectCubesZ = function(zCrossSection){
   });
 };
 
-let pivot = null;
-let createPivot = function(crossSection){
-  pivot = new THREE.Mesh(crossSection.geometry, crossSection.material);
-  pivot.position.setY(crossSection.position.y);
-  pivot.position.setX(crossSection.position.x);
-  pivot.position.setZ(crossSection.position.z);
-  scene.add(pivot);
-};
-
-// SNAP
-
-function snap(crossSection, axis){
-    let axes = ["x","y","z"];
-
-    if (crossSection.rotation.equals(bigCube.rotation) === false) {
-      let distances = [Math.PI, Math.PI/2, -Math.PI/2, 0]
-      let index = null;
-      let least = 100;
-      let distance = null;
-      for (var i = 0; i < distances.length; i++) {
-        let value = `crossSection.rotation.${axis}`;
-        distance = eval(value) - distances[i];
-
-        console.log(distances[i], distance)
-        if (Math.abs(distance) <= Math.abs(least)){
-          least = distance;
-          index = i;
-        };
-
-      }
-
-
-    let order = axes.indexOf(axis);
-    let angles = [crossSection.rotation.x,crossSection.rotation.y,crossSection.rotation.z];
-    angles[order] = distances[index];
-    crossSection.rotation.set(angles[0], angles[1], angles[2]);
-  };
-}
 
 // RENDER
 let snapper = null;
@@ -486,7 +448,7 @@ var render = function () {
 
 
 
-  //if not clicking on cube, let camera rotate 
+  //if not clicking on cube, let camera rotate
   if (intersects.length === 0){
     controls.enableRotate = true;
   };
