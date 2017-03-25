@@ -68,7 +68,7 @@ var smallCubeGeometry = new THREE.BoxGeometry(1,1,1);
 smallCubeGeometry.name = "smallCubeGeometry"
 var color = new THREE.Color().setRGB(1, 0, 0);
 
-//create an array of materials with different colors, so each cube has a different color on each face 
+//create an array of materials with different colors, so each cube has a different color on each face
 var smallCubeMaterials = [
     new THREE.MeshBasicMaterial({color:"orange"}),
     new THREE.MeshBasicMaterial({color:"green"}),
@@ -78,19 +78,6 @@ var smallCubeMaterials = [
     new THREE.MeshBasicMaterial({color:"yellow"})
 ];
 
-// scramble the color array, so each small cube is created w/ a different arrangement of colors, leading
-//to a scrambled big cube
-function shuffle(a) {
-    var dup = a;
-    var j, x, i;
-    for (i = dup.length; i; i--) {
-        j = Math.floor(Math.random() * i);
-        x = dup[i - 1];
-        dup[i - 1] = dup[j];
-        dup[j] = x;
-    }
-    return dup;
-}
 
 
 //create 27 small cubes, properly position within big cube
@@ -103,15 +90,6 @@ let cube = new THREE.Mesh(smallCubeGeometry, smallCubeMaterial)
 for (var x = -1; x <= 1; x++) {
   for (var y = -1; y <= 1; y++) {
       for (var z = -1; z <= 1; z++) {
-        var smallCubeMaterials = [
-            new THREE.MeshBasicMaterial({color:"orange"}),
-            new THREE.MeshBasicMaterial({color:"green"}),
-            new THREE.MeshBasicMaterial({color:"pink"}),
-            new THREE.MeshBasicMaterial({color:"blue"}),
-            new THREE.MeshBasicMaterial({color:"red"}),
-            new THREE.MeshBasicMaterial({color:"yellow"})
-        ];
-        smallCubeMaterials = shuffle(smallCubeMaterials);
         smallCubeMaterial = new THREE.MeshFaceMaterial(smallCubeMaterials);
         cube = new THREE.Mesh(smallCubeGeometry, smallCubeMaterial)
 
@@ -126,6 +104,8 @@ for (var x = -1; x <= 1; x++) {
 };
 
 cubeArray.forEach((cube) =>scene.add(cube))
+
+
 
 
 
@@ -347,12 +327,12 @@ let dragZCrossSection = function(obj){
 // BOUNDARY BOXES
 
 
-let boundaryBoxX = new THREE.Box3();
+var boundaryBoxX = new THREE.Box3();
 // boundaryBoxX.setFromObject(xCrossSection);
-let boundaryBoxY = new THREE.Box3();
+var boundaryBoxY = new THREE.Box3();
 // boundaryBoxY.setFromObject(yCrossSection);
-let boundaryBoxZ = new THREE.Box3();
-let cubeBoundaryBox = new THREE.Box3();
+var boundaryBoxZ = new THREE.Box3();
+var cubeBoundaryBox = new THREE.Box3();
 // cubeBoundaryBox.setFromObject(smallCube);
 
 
@@ -366,7 +346,7 @@ let xSwitched = true;
 
 //check to see which small cubes are contained within selected cross section
 //set those small cubes as children of selected cross section
-let selectCubesX = function(xCrossSection){
+var selectCubesX = function(xCrossSection){
   cubeArray.forEach( (cube) => {
 
     boundaryBoxX.setFromObject(xCrossSection);
@@ -387,7 +367,7 @@ let selectCubesX = function(xCrossSection){
 };
 
 
-let selectCubesY = function(yCrossSection){
+var selectCubesY = function(yCrossSection){
   cubeArray.forEach( (cube) => {
     boundaryBoxY.setFromObject(yCrossSection);
     cubeBoundaryBox.setFromObject(cube);
@@ -409,7 +389,7 @@ let selectCubesY = function(yCrossSection){
 };
 
 
-let selectCubesZ = function(zCrossSection){
+var selectCubesZ = function(zCrossSection){
   cubeArray.forEach( (cube) => {
     boundaryBoxZ.setFromObject(zCrossSection);
     cubeBoundaryBox.setFromObject(cube);
@@ -436,6 +416,10 @@ let needToPick = true;
 let xComponent = 0;
 let yComponent = 0;
 let crossSection = null;
+
+
+
+
 
 var render = function () {
 
@@ -483,4 +467,56 @@ var render = function () {
   bigCube.updateMatrixWorld();
 };
 
+
+//function to scramble cube at start
+function scramble(){
+
+  function generateRandomNum(){
+    return Math.floor((Math.random() * 10) + 1);
+  }
+
+  var rightAngle = Math.PI/2;
+
+  function rotateXcrossSections(){
+    xCrossSections.forEach(xCrossSection => {
+      selectCubesX(xCrossSection);
+      let num = generateRandomNum();
+      //multiply right angle by random number to generate random number of rotations
+      let rotate = num*rightAngle;
+      xCrossSection.rotateY(rotate);
+    })
+  }
+
+  function rotateYcrossSections(){
+    yCrossSections.forEach(yCrossSection => {
+      selectCubesY(yCrossSection);
+      let num = generateRandomNum();
+      let rotate = num*rightAngle;
+      yCrossSection.rotateX(rotate);
+    })
+  }
+
+  function rotateZcrossSections(){
+    zCrossSections.forEach(zCrossSection => {
+      selectCubesZ(zCrossSection);
+      let num = generateRandomNum();
+      let rotate = num*rightAngle;
+      zCrossSection.rotateZ(rotate);
+    })
+  }
+
+  //randomly rotate each cross section a bunch of times to achieve sufficient scrambling
+  for (let i = 0; i < 10; i++){
+    rotateZcrossSections();
+    render();
+    rotateXcrossSections();
+    render();
+    rotateYcrossSections();
+    render();
+  }
+
+
+
+}
+scramble();
 render();
