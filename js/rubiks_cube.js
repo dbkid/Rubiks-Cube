@@ -68,6 +68,7 @@ var smallCubeGeometry = new THREE.BoxGeometry(1,1,1);
 smallCubeGeometry.name = "smallCubeGeometry"
 var color = new THREE.Color().setRGB(1, 0, 0);
 
+//create an array of materials with different colors, so each cube has a different color on each face 
 var smallCubeMaterials = [
     new THREE.MeshBasicMaterial({color:"orange"}),
     new THREE.MeshBasicMaterial({color:"green"}),
@@ -77,27 +78,53 @@ var smallCubeMaterials = [
     new THREE.MeshBasicMaterial({color:"yellow"})
 ];
 
-// create a MeshFaceMaterial, which allows each small cube to have a different material (color) on each face
-var smallCubeMaterial = new THREE.MeshFaceMaterial(smallCubeMaterials);
+// scramble the color array, so each small cube is created w/ a different arrangement of colors, leading
+//to a scrambled big cube
+function shuffle(a) {
+    var dup = a;
+    var j, x, i;
+    for (i = dup.length; i; i--) {
+        j = Math.floor(Math.random() * i);
+        x = dup[i - 1];
+        dup[i - 1] = dup[j];
+        dup[j] = x;
+    }
+    return dup;
+}
+
 
 //create 27 small cubes, properly position within big cube
-let newCubes = [];
 let cubeArray = [];
-for (var i = 0; i < 27; i++) {
-  newCubes.push(new THREE.Mesh(smallCubeGeometry, smallCubeMaterial));
-}
-  for (var x = -1; x <= 1; x++) {
-    for (var y = -1; y <= 1; y++) {
-        for (var z = -1; z <= 1; z++) {
-          let cube = newCubes.pop();
-          cube.position.setX(x);
-          cube.position.setY(y);
-          cube.position.setZ(z);
-          cubeArray.push(cube);
+// create a MeshFaceMaterial, which allows each small cube to have a different material (color) on each face
+let smallCubeMaterial = new THREE.MeshFaceMaterial(smallCubeMaterials);
 
-    }
+let cube = new THREE.Mesh(smallCubeGeometry, smallCubeMaterial)
+
+for (var x = -1; x <= 1; x++) {
+  for (var y = -1; y <= 1; y++) {
+      for (var z = -1; z <= 1; z++) {
+        var smallCubeMaterials = [
+            new THREE.MeshBasicMaterial({color:"orange"}),
+            new THREE.MeshBasicMaterial({color:"green"}),
+            new THREE.MeshBasicMaterial({color:"pink"}),
+            new THREE.MeshBasicMaterial({color:"blue"}),
+            new THREE.MeshBasicMaterial({color:"red"}),
+            new THREE.MeshBasicMaterial({color:"yellow"})
+        ];
+        smallCubeMaterials = shuffle(smallCubeMaterials);
+        smallCubeMaterial = new THREE.MeshFaceMaterial(smallCubeMaterials);
+        cube = new THREE.Mesh(smallCubeGeometry, smallCubeMaterial)
+
+        cube.position.setX(x);
+        cube.position.setY(y);
+        cube.position.setZ(z);
+        newCube = cube;
+        cubeArray.push(newCube);
+
+      }
   }
 };
+
 cubeArray.forEach((cube) =>scene.add(cube))
 
 
